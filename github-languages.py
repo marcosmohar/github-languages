@@ -29,7 +29,7 @@ def accumulate_languages(language_dictionaries):
 	accumulated = defaultdict(int)
 	total = 0
 	for language_dictionary in language_dictionaries:
-		for language_name, number_of_bytes in language_dictionary:
+		for language_name, number_of_bytes in language_dictionary.iteritems():
 			accumulated[language_name] += number_of_bytes
 			total += number_of_bytes
 	return accumulated, total
@@ -38,8 +38,13 @@ def main():
 	""" Main function """
 	repositories = get_repositories(sys.argv[1])
 	language_dictionaries = get_language_dictionaries(repositories)
-	print language_dictionaries
+	language_totals, total_bytes = accumulate_languages(language_dictionaries)
+	print language_totals, total_bytes
+	sorted_language_totals = sorted(language_totals.iteritems(), key=operator.itemgetter(1), reverse=True)
 
+	for language_name, number_of_bytes in sorted_language_totals:
+		percentage = 100.0 * number_of_bytes / total_bytes
+		print "{}: {:.2f}".format(language_name, percentage)
 
 
 if __name__ == "__main__":
